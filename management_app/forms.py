@@ -7,12 +7,12 @@ from .models import CheckIn, CheckOut,Customer
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ['__all__']
+        fields = ['firstname','lastname','phone','alternate_phone','address','gender','auth_number']
 
 class CheckInForm(forms.ModelForm):
     class Meta:
         model = CheckIn
-        fields = ['__all__']
+        fields = '__all__'
     def __init__ (self, *args, **kwargs):
         available_rooms = kwargs.pop('available_rooms', None)
         super().__init__(*args, **kwargs)
@@ -23,4 +23,4 @@ class CheckInForm(forms.ModelForm):
 class CheckOutForm(forms.ModelForm):
     class Meta :
         model = CheckOut
-        fields = ['__all__']
+        fields = '__all__'

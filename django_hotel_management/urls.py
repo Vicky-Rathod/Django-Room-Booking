@@ -14,8 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf.urls import re_path,include
 from django.urls import path
+from management_app import views as my_customer
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    re_path(r'^$', my_customer.index, name='home'),
+    re_path(r'^(?P<customer_id>\d+)/checkin/$', my_customer.checkin, name='checkin'),
+    re_path(r'^currentcheckin$', my_customer.current_checkin, name='checkinlist'),
 ]

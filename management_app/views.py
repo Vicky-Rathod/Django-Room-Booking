@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
-from management_app.models import CheckIn, CheckOut,Customer
+from management_app.models import CheckIn, CheckOut,Customer,Rooms
 from .forms import CheckInForm,CheckOutForm,CustomerForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib import messages
 from django.urls import reverse
-@login_required
+# @login_required
 def index(request):
     customer = Customer.objects.all()
     total_customer_number = Customer.objects.all().count()
@@ -14,7 +14,8 @@ def index(request):
     available_rooms = Rooms.objects.exclude(pk__in=occupied_rooms)
     available_rooms_number = available_rooms.count()
     occupied_rooms_number = occupied_rooms.count()
-    return render(request, 'index.html', {'customer': customer})
+    active_checkin_number = active_checkin.count()
+    return render(request, 'index.html', {'customer': customer,'total_customer_number':total_customer_number,'active_checkin_number':active_checkin_number,'occupied_rooms_number':occupied_rooms_number,'available_rooms_number':available_rooms_number})
 
 @login_required
 def new(request):
@@ -29,7 +30,7 @@ def new(request):
         form = CustomerForm()
         return render(request, 'new.html', {'form': form})
 
-@login_required
+
 def checkin(request, customer_id):
     object = get_object_or_404(Customer, pk=customer_id)
 
@@ -49,6 +50,11 @@ def checkin(request, customer_id):
         formtwo = CheckInForm(available_rooms=available_rooms)
 
     return render(request, 'checkin.html', {'object': object, 'form2': formtwo})
+
+
+def current_checkin(request):
+    checkins =  CheckIn.objects.filter(checkout__isnull=True)
+    return render(request, 'examples/tables.html',{'checkins':checkins})
 
 @login_required
 def checkout(request, checkin_id):
