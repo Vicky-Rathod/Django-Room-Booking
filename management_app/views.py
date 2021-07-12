@@ -21,11 +21,10 @@ def index(request):
 def new(request):
     if request.POST:
         form = CustomerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/', messages.success(request, 'Patient is successfully created.', 'alert-success'))
-        else:
+        if not form.is_valid():
             return HttpResponse(form.errors)
+        form.save()
+        return redirect('/', messages.success(request, 'Patient is successfully created.', 'alert-success'))
     else:
         form = CustomerForm()
         return render(request, 'new.html', {'form': form})
@@ -37,12 +36,11 @@ def checkin(request, customer_id):
     if request.method == "POST":
         formtwo = CheckInForm(request.POST)
 
-        if formtwo.is_valid():
-            formtwo.save()
-
-            return HttpResponseRedirect(reverse('checkinlist'))
-        else:
+        if not formtwo.is_valid():
             return HttpResponse(formtwo.errors.as_data())
+        formtwo.save()
+
+        return HttpResponseRedirect(reverse('checkinlist'))
     else:
         active_checkin = CheckIn.objects.filter(checkout__isnull=True)
         occupied_rooms = active_checkin.values_list('room_type', flat=True).distinct()
@@ -63,12 +61,11 @@ def checkout(request, checkin_id):
     if request.method == "POST":
         formtwo = CheckOutForm(request.POST)
 
-        if formtwo.is_valid():
-            formtwo.save()
-
-            return HttpResponseRedirect(reverse('checkoutlist'))
-        else:
+        if not formtwo.is_valid():
             return HttpResponse(formtwo.errors.as_data())
+        formtwo.save()
+
+        return HttpResponseRedirect(reverse('checkoutlist'))
     else:
         formtwo = CheckOutForm(request.POST)
     return render(request, 'checkout.html', {'object': object, 'form2': formtwo})
